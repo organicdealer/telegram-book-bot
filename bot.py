@@ -5,7 +5,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from parser_yakaboo import get_discounts
 
 # 🔧 Заміни токен і chat_id на свої
-TOKEN = "8107252798:AAEu8ExotGRwZTrRZDGjaPciCgT1zG_AlW8"
+TOKEN = "7859780731:AAFKQfcB_rs4aoYsTY0F3l7zWjuTzNCFgLY"
 CHAT_ID = "33268705"
 
 # 🔧 Налаштування логування

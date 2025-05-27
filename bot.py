@@ -1,12 +1,21 @@
 import logging
+import os
+from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from apscheduler.schedulers.background import BackgroundScheduler
 from parser_yakaboo import get_discounts
 
+<<<<<<< HEAD
 # 🔧 Заміни токен і chat_id на свої
 TOKEN = "7859780731:AAFKQfcB_rs4aoYsTY0F3l7zWjuTzNCFgLY"
 CHAT_ID = "33268705"
+=======
+# 📥 Завантаження змінних з .env
+load_dotenv()
+TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
+>>>>>>> f6f1fe1 (🛡️ add .env to .gitignore and load secrets via dotenv)
 
 # 🔧 Налаштування логування
 logging.basicConfig(level=logging.INFO)
@@ -20,7 +29,7 @@ async def send_discounts(context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(chat_id=CHAT_ID, text="📭 Нових знижок не знайдено.")
         return
 
-    # Дробимо повідомлення по 10 книжок (щоб не перевищити обмеження Telegram)
+    # Дробимо повідомлення по 10 книжок
     chunk_size = 10
     for i in range(0, len(books), chunk_size):
         chunk = books[i:i + chunk_size]
@@ -33,12 +42,12 @@ async def send_discounts(context: ContextTypes.DEFAULT_TYPE):
             )
         await context.bot.send_message(chat_id=CHAT_ID, text=text, parse_mode="HTML")
 
-# 🟢 Команда для ручного запуску
+# 🟢 Команда /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("👋 Вітаю! Надсилаю сьогоднішні знижки...")
     await send_discounts(context)
 
-# 🕑 Планувальник для щоденної розсилки
+# 🕑 Планувальник
 def daily_discount_job(application):
     scheduler = BackgroundScheduler()
     scheduler.add_job(lambda: application.create_task(send_discounts(application.bot)), 'cron', hour=9)
@@ -48,12 +57,7 @@ def daily_discount_job(application):
 # 🚀 Запуск бота
 if __name__ == "__main__":
     application = ApplicationBuilder().token(TOKEN).build()
-
-    # Додаємо обробник команди /start
     application.add_handler(CommandHandler("start", start))
-
-    # Стартуємо щоденну розсилку
     daily_discount_job(application)
-
     logger.info("Бот запущено...")
     application.run_polling()
